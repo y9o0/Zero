@@ -1,5 +1,3 @@
-use std::fmt;
-
 #[derive(Debug, Clone, Copy)]
 pub enum PieceType {
     Pawn,
@@ -12,20 +10,7 @@ pub enum PieceType {
     None,
 }
 
-impl fmt::Display for PieceType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Bishop => write!(f, "bishop"),
-            Self::King => write!(f, "king"),
-            Self::None => write!(f, "none"),
-            Self::Pawn => write!(f, "pawn"),
-            Self::Queen => write!(f, "queen"),
-            Self::Rook => write!(f, "rook"),
-            Self::Knight => write!(f, "knight"),
-        }
-    }
-}
-
+#[allow(warnings)]
 impl PieceType {
     pub fn is_pawn(&self) -> bool {
         match self {
@@ -66,7 +51,7 @@ impl Color {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Color {
     White,
     Black,
@@ -78,6 +63,18 @@ pub enum Color {
 pub struct Piece {
     pub piece_type: PieceType,
     pub color: Color,
+    pub meta: Meta,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct Meta {
+    pub has_moved: bool,
+}
+
+impl Meta {
+    pub fn new() -> Self {
+        Self { has_moved: false }
+    }
 }
 
 impl Default for Piece {
@@ -85,6 +82,7 @@ impl Default for Piece {
         Self {
             piece_type: PieceType::None,
             color: Color::None,
+            meta: Meta::new(),
         }
     }
 }
@@ -93,6 +91,7 @@ fn empty() -> Piece {
     Piece {
         piece_type: PieceType::None,
         color: Color::None,
+        meta: Meta::new(),
     }
 }
 
@@ -100,6 +99,7 @@ fn add(color: Color, piece: PieceType) -> Piece {
     Piece {
         piece_type: piece,
         color,
+        meta: Meta::new(),
     }
 }
 
@@ -173,5 +173,45 @@ impl Board {
             add(Color::Black, PieceType::Knight),
             add(Color::Black, PieceType::Rook),
         ])
+    }
+
+    fn to_pieces_uni(p: &Piece) -> String {
+        let res = match (p.piece_type, p.color) {
+            (PieceType::King, Color::Black) => "♔",
+            (PieceType::Queen, Color::Black) => "♕",
+            (PieceType::Rook, Color::Black) => "♖",
+            (PieceType::Bishop, Color::Black) => "♗",
+            (PieceType::Knight, Color::Black) => "♘",
+            (PieceType::Pawn, Color::Black) => "♙",
+            (PieceType::King, Color::White) => "♚",
+            (PieceType::Queen, Color::White) => "♛",
+            (PieceType::Rook, Color::White) => "♜",
+            (PieceType::Bishop, Color::White) => "♝",
+            (PieceType::Knight, Color::White) => "♞",
+            (PieceType::Pawn, Color::White) => "♟",
+            (PieceType::None, Color::None) => " ",
+            (_, Color::None) => "",
+            (PieceType::None, _) => "",
+        };
+
+        res.to_string()
+    }
+
+    pub fn print_board(&self) {
+        let mut index = 0;
+
+        for i in self.0 {
+            index += 1;
+
+            let p = Self::to_pieces_uni(&i);
+            print!("| {:<4} ", p);
+            if index == 8 {
+                print!("|");
+
+                println!();
+
+                index = 0;
+            }
+        }
     }
 }
