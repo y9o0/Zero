@@ -69,11 +69,17 @@ pub struct Piece {
 #[derive(Debug, Clone, Copy)]
 pub struct Meta {
     pub has_moved: bool,
+    pub rank: u32,
+    pub file: u32,
 }
 
 impl Meta {
     pub fn new() -> Self {
-        Self { has_moved: false }
+        Self {
+            has_moved: false,
+            rank: 0,
+            file: 0,
+        }
     }
 }
 
@@ -101,6 +107,30 @@ fn add(color: Color, piece: PieceType) -> Piece {
         color,
         meta: Meta::new(),
     }
+}
+
+pub trait Ranks {
+    fn to_rank(&self) -> u32;
+}
+
+pub trait File {
+    fn to_file(&self) -> u32;
+}
+
+impl Ranks for u32 {
+    fn to_rank(&self) -> u32 {
+        self / 8
+    }
+}
+
+impl File for u32 {
+    fn to_file(&self) -> u32 {
+        self % 8
+    }
+}
+
+pub fn to_index(rank: u32, file: u32) -> u32 {
+    rank * 8 + file
 }
 
 pub struct Board(pub [Piece; 64]);
