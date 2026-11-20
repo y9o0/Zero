@@ -6,6 +6,8 @@ pub enum ZeroErr {
     Illegal { at: String, why: String },
     #[error("Unimplemented : {}", message)]
     Unimplemented { message: String },
+    #[error("Unexpected : {}", message)]
+    Unexpected { message: String },
 }
 
 pub type ZeroResult<T> = std::result::Result<T, ZeroErr>;

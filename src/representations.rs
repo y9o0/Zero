@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Debug, Clone, Copy)]
 pub enum PieceType {
     Pawn,
@@ -8,6 +10,47 @@ pub enum PieceType {
     Bishop,
 
     None,
+}
+
+#[allow(warnings)]
+pub enum MoveRep {
+    A(u32),
+    B(u32),
+    C(u32),
+    D(u32),
+    E(u32),
+    F(u32),
+    G(u32),
+    H(u32),
+}
+
+impl MoveRep {
+    pub fn to_index(&self) -> u32 {
+        match self {
+            Self::A(n) => to_index(*n, 0),
+            Self::B(n) => to_index(*n, 1),
+            Self::C(n) => to_index(*n, 2),
+            Self::D(n) => to_index(*n, 3),
+            Self::E(n) => to_index(*n, 4),
+            Self::F(n) => to_index(*n, 5),
+            Self::G(n) => to_index(*n, 6),
+            Self::H(n) => to_index(*n, 7),
+        }
+    }
+}
+
+impl fmt::Display for PieceType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Bishop => write!(f, "bishop"),
+            Self::King => write!(f, "king"),
+            Self::Knight => write!(f, "knight"),
+            Self::None => write!(f, "empty"),
+            Self::Pawn => write!(f, "pawn"),
+            Self::Queen => write!(f, "queen"),
+            Self::Rook => write!(f, "rook"),
+        }
+    }
 }
 
 #[allow(warnings)]

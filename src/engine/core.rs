@@ -1,4 +1,12 @@
+use crate::representations::MoveRep;
+
 use super::*;
+
+pub enum MoveType {
+    Forward(u32),
+    Left(u32),
+    Right(u32),
+}
 
 pub struct Engine {
     pub board: Board,
@@ -20,16 +28,22 @@ impl Engine {
         }
     }
 
-    pub fn make_move(&mut self, from: u32, n: u32) -> ZeroResult<()> {
-        let p = &mut self.board.0[from as usize];
+    pub fn make_move(&mut self, from: MoveRep, move_type: MoveType) -> ZeroResult<()> {
+        let from = from.to_index();
+
+        let mut p = self.board.0[from as usize];
         p.meta.rank = from.to_rank();
         p.meta.file = from.to_file();
 
         self.can_move(from)?;
 
-        let mut p = self.board.0[from as usize];
         let board = &mut self.board;
-        p.move_nforward(board, n)?;
+
+        match move_type {
+            MoveType::Forward(n) => p.move_nforward(board, n)?,
+            MoveType::Left(n) => p.move_nleft(board, n)?,
+            MoveType::Right(n) => p.move_nright(board, n)?,
+        }
 
         self.moves_count += 1;
 
