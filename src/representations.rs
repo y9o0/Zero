@@ -39,6 +39,21 @@ impl MoveRep {
     }
 }
 
+impl fmt::Display for MoveRep {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::A(x) => write!(f, "a{}", x),
+            Self::B(x) => write!(f, "b{}", x),
+            Self::D(x) => write!(f, "d{}", x),
+            Self::E(x) => write!(f, "e{}", x),
+            Self::G(x) => write!(f, "g{}", x),
+            Self::C(x) => write!(f, "c{}", x),
+            Self::F(x) => write!(f, "f{}", x),
+            Self::H(x) => write!(f, "h{}", x),
+        }
+    }
+}
+
 impl fmt::Display for PieceType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -107,6 +122,27 @@ pub struct Piece {
     pub piece_type: PieceType,
     pub color: Color,
     pub meta: Meta,
+}
+
+impl Piece {
+    pub fn as_rep(&self) -> MoveRep {
+        let r = self.meta.rank;
+
+        match self.meta.file {
+            0 => MoveRep::A(r),
+            1 => MoveRep::B(r),
+            2 => MoveRep::C(r),
+            3 => MoveRep::D(r),
+            4 => MoveRep::E(r),
+            5 => MoveRep::F(r),
+            6 => MoveRep::G(r),
+            7 => MoveRep::H(r),
+            _ => unreachable!(
+                "This branch should never be hit, the file number doesn't match '{}' anything!",
+                self.meta.file
+            ),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy)]

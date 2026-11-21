@@ -6,6 +6,7 @@ pub enum MoveType {
     Forward(u32),
     Left(u32),
     Right(u32),
+    Back(u32),
 }
 
 pub struct Engine {
@@ -43,6 +44,7 @@ impl Engine {
             MoveType::Forward(n) => p.move_nforward(board, n)?,
             MoveType::Left(n) => p.move_nleft(board, n)?,
             MoveType::Right(n) => p.move_nright(board, n)?,
+            MoveType::Back(n) => p.move_nback(board, n)?,
         }
 
         self.moves_count += 1;
